@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    command: ["npm", "run", "migrations"]
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/ecommerce     
+      REDIS_HOST: redis
+      ELASTICSEARCH_HOST: elasticsearch
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"

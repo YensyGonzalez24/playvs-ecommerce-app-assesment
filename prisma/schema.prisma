@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+generator nexusPrisma {
+  provider = "nexus-prisma"
+}
+
+/// User model represents a user in the system.
+model User {
+  /// Unique identifier of the user.
+  id String @id @default(uuid())
+
+  /// Email address of the user. It is unique across all users.
+  email String @unique
+
+  /// Name of the user.
+  name String
+
+  /// Password of the user. Stored as a hashed value.
+  password String
+
+  /// Role of the user. Default role is USER.
+  role Role @default(USER)
+}
+
+model Category {
+  /// Unique identifier of the category.
+  id String @id @default(uuid())
+
+  /// Name of the category. It is unique across all categories.
+  name String @unique
+
+  /// Products belonging to the category.
+  products Product[]
+}
+
+model Product {
+  /// Unique identifier of the product.
+  id String @id @default(uuid())
+
+  /// Name of the product.
+  name String
+
+  /// Price of the product.
+  price Float
+
+  /// Description of the product.
+  description String
+
+  /// Foreign key to the category the product belongs to.
+  categoryId String
+
+  /// Category the product belongs to.
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+enum Role {
+  /// Regular user role.
+  USER
+
+  /// Administrator role with additional privileges.
+  ADMIN
+}

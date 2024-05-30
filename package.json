@@ -1,0 +1,36 @@
+{
+  "name": "ecommerce-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx ts-node src/server.ts",
+    "migrations": "npx prisma migrate dev --name 'init' --preview-feature && npm run generate-prisma-client",
+    "generate-prisma-client": "npx prisma generate && npm run start",
+    "create-indexes": "ts-node src/utils/createIndexes.ts && npm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/graphql": "^14.5.0",
+    "@types/node": "^20.12.13",
+    "ts-node": "^10.9.2",
+    "typerscript": "^0.2.3"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "@elastic/elasticsearch": "^7.17.13",
+    "@prisma/client": "^5.14.0",
+    "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "graphql-shield": "^7.6.5",
+    "nexus": "^1.3.0",
+    "nexus-prisma": "^2.0.5",
+    "pg": "^8.11.5",
+    "prisma": "^5.14.0",
+    "redis": "^4.6.14",
+    "yup": "^1.4.0"
+  }
+}
