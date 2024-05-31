@@ -56,7 +56,8 @@ async function startServer() {
     expressMiddleware<Context>(server, {
       context: async ({ req }) => {
         const userId = req.headers["user-id"] as string;
-        return { ...partialContext, userId };
+        const elasticsearch = partialContext.elasticsearch;
+        return { ...partialContext, userId, elasticsearch };
       },
     })
   );

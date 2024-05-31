@@ -2,24 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { Client } from "@elastic/elasticsearch";
 
 /**
- * Creates an Elasticsearch client and performs necessary setup operations.
- * @param prisma - The Prisma client instance.
- * @returns The Elasticsearch client instance.
- */
-const createElasticSearchClient = (prisma: PrismaClient) => {
-  const elasticsearch = new Client({
-    node: `http://${process.env.ELASTICSEARCH_HOST}:9200`,
-  });
-
-  createIndex(elasticsearch);
-  insertDataIntoElasticsearch(prisma, elasticsearch);
-
-  return elasticsearch;
-};
-
-/**
  * Inserts data into Elasticsearch.
- * 
+ *
  * @param prisma - The Prisma client instance.
  * @param elasticsearch - The Elasticsearch client instance.
  */
@@ -27,15 +11,32 @@ const insertDataIntoElasticsearch = async (
   prisma: PrismaClient,
   elasticsearch: Client
 ) => {
-  const products = await prisma.product.findMany();
-  const body = products.flatMap((product) => [
-    { index: { _index: "products", _id: product.id } },
-    product,
-  ]);
+  try {
+    const products = await prisma.product.findMany();
 
-  await elasticsearch.bulk({ refresh: true, body }).catch((error) => {
+    if (products.length === 0) {
+      console.log("No products found to insert into Elasticsearch.");
+      return;
+    }
+
+    const body = products.flatMap((product) => [
+      { index: { _index: "products", _id: product.id } },
+      product,
+    ]);
+
+    const { body: bulkResponse } = await elasticsearch.bulk({
+      refresh: true,
+      body,
+    });
+
+    if (bulkResponse.errors) {
+      console.error("Errors in bulk insert:", bulkResponse.errors);
+    } else {
+      console.log("Successfully inserted data into Elasticsearch.");
+    }
+  } catch (error) {
     console.error("Elasticsearch error:", error);
-  });
+  }
 };
 
 /**
@@ -45,6 +46,7 @@ const insertDataIntoElasticsearch = async (
 const createIndex = async (elasticsearch: Client) => {
   const index = "products";
   const exists = await elasticsearch.indices.exists({ index });
+
   if (!exists.body) {
     await elasticsearch.indices.create({
       index,
@@ -60,6 +62,4 @@ const createIndex = async (elasticsearch: Client) => {
   }
 };
 
-export {
-    createElasticSearchClient,
-}
+export { insertDataIntoElasticsearch, createIndex };

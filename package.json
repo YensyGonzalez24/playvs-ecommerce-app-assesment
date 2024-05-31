@@ -6,9 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx ts-node src/server.ts",
-    "migrations": "npx prisma migrate dev --name 'init' --preview-feature && npm run generate-prisma-client",
-    "generate-prisma-client": "npx prisma generate && npm run start",
-    "create-indexes": "ts-node src/utils/createIndexes.ts && npm run start"
+    "migrations": "npx prisma migrate dev --name 'init' --preview-feature",
+    "generate-prisma-client": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +15,7 @@
   "devDependencies": {
     "@types/graphql": "^14.5.0",
     "@types/node": "^20.12.13",
+    "prisma": "^5.14.0",
     "ts-node": "^10.9.2",
     "typerscript": "^0.2.3"
   },
@@ -29,7 +29,6 @@
     "nexus": "^1.3.0",
     "nexus-prisma": "^2.0.5",
     "pg": "^8.11.5",
-    "prisma": "^5.14.0",
     "redis": "^4.6.14",
     "yup": "^1.4.0"
   }

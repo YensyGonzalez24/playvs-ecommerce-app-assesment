@@ -30,7 +30,7 @@ This project is a simple e-commerce backend API that handles products, categorie
   
 ### Installation
 
-`docker-compose up`
+`docker-compose up --build`
 
 ## Usage
 
